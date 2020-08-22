@@ -9,9 +9,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.CodeBoy.MediaFacer.mediaHolders.pictureContent
 import com.bumptech.glide.Glide
-import com.example.simple_image_gallery.PictureActivity
 import com.example.simple_image_gallery.R
-import kotlinx.android.synthetic.main.activity_picture.*
 import kotlinx.android.synthetic.main.picture_item.view.*
 import java.util.ArrayList
 
