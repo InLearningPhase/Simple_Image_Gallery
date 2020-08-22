@@ -36,7 +36,7 @@ class ImageRecycleAdapter(private val pictureActivity: Context, private val pict
     
     inner class PictureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var picture: ImageView = itemView.picture
+        private var picture: ImageView = itemView.picture
         private var pos: Int = 0
 
         fun setPosition(pos: Int){

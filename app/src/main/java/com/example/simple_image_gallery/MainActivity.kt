@@ -12,11 +12,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity() {
+
     private var continueAfterPermission = 0
-    var audioIntent: Intent? = null
-    var picIntent: Intent? = null
-    var videoIntent: Intent? = null
-    var TAG = "MainActivity"
+    private lateinit var picIntent: Intent
+    private var TAG = "MainActivity"
+    private val MY_PERMISSIONS_REQUEST_STORAGE_PERMISSIONS = 10
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         val mPicButton = findViewById<Button>(R.id.btn_get_image)
         mPicButton.setOnClickListener {
-            if (isStoragePermisssionGranted) {
+            if (isStoragePermissionGranted()) {
                 startActivity(picIntent)
             } else {
                 continueAfterPermission = 1
@@ -35,30 +36,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestStoragePermission() {
-        val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE)
-        ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_REQUEST_STORAGE_PERMISSIONS)
+        val permissions = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        ActivityCompat.requestPermissions(
+            this,
+            permissions,
+            MY_PERMISSIONS_REQUEST_STORAGE_PERMISSIONS
+        )
     }
 
-    private val isStoragePermisssionGranted: Boolean
-        private get() {
-            var granted = false
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Log.d("outer if", "executed")
-                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    granted = true
-                    Log.d("inner if", "executed")
-                } else {
-                    granted = false
-                    Log.d("inner else", "executed")
-                }
-            } else {
+    private fun isStoragePermissionGranted(): Boolean
+    {
+        val granted: Boolean
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.d("outer if", "executed")
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            ) {
                 granted = true
-                Log.d("outer else", "executed")
+                Log.d("inner if", "executed")
+            } else {
+                granted = false
+                Log.d("inner else", "executed")
             }
-            return granted
+        } else {
+            granted = true
+            Log.d("outer else", "executed")
         }
+        return granted
+    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -66,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
             return
         }
-        if (grantResults.size != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Storage permission granted")
             continueAfterPermissionGrant()
         } else {
@@ -79,9 +87,5 @@ class MainActivity : AppCompatActivity() {
             1 -> startActivity(picIntent)
         }
         continueAfterPermission = 0
-    }
-
-    companion object {
-        private const val MY_PERMISSIONS_REQUEST_STORAGE_PERMISSIONS = 10
     }
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Simple_Image_Gallery</string>
+    <string name="image_disc">images</string>
+    <string name="btn_get_images">Show Images</string>
 </resources>
